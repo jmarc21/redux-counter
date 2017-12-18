@@ -2,49 +2,56 @@ import React, { Component } from "react";
 
 import "./App.css";
 
+import { connect } from 'react-redux';
+import { increment, decrement } from './ducks/counter'
+
 export class App extends Component {
 	render() {
+		//do this so it does not make accidental bugs!!!
+		let {increment, decrement, currentValue} = this.props;
+
+
 		return (
 			<div className="app">
 				<section className="counter">
-					<h1 className="counter__current-value">{ 0 }</h1>
+					<h1 className="counter__current-value">{currentValue}</h1>
 					<div className="counter__button-wrapper">
 						<button
 							className="counter__button increment-one"
-							onClick={ () => null }
+							onClick={() => increment(1)}
 						>
 							+1
 						</button>
 						<button
 							className="counter__button increment-five"
-							onClick={ () => null }
+							onClick={() => increment(5)}
 						>
 							+5
 						</button>
 						<button
 							className="counter__button decrement-one"
-							onClick={ () => null }
+							onClick={() => decrement(1)}
 						>
 							-1
 						</button>
 						<button
 							className="counter__button decrement-five"
-							onClick={ () => null }
+							onClick={() => decrement(5)}
 						>
 							-5
 						</button>
 						<br />
 						<button
 							className="counter__button undo"
-							disabled={ true }
-							onClick={ () => null }
+							disabled={true}
+							onClick={() => null}
 						>
 							Undo
 						</button>
 						<button
 							className="counter__button redo"
-							disabled={ true }
-							onClick={ () => null }
+							disabled={true}
+							onClick={() => null}
 						>
 							Redo
 						</button>
@@ -52,12 +59,30 @@ export class App extends Component {
 				</section>
 				<section className="state">
 					<pre>
-						{ JSON.stringify( this.props, null, 2 ) }
+						{JSON.stringify(this.props, null, 2)}
 					</pre>
 				</section>
 			</div>
 		);
 	}
 }
+//structure you will always follow to connect your app to your actions.
+function moveFromStoreToProps(state) {
+	if(!state){
+		state = {
+			currentValue: 0
+		}
+	}
+	return {
+		currentValue: state.currentValue
+	}
+}
 
-export default App;
+let outputActions = {
+	increment,
+	decrement
+}
+
+let connectedApp = connect(moveFromStoreToProps, outputActions)
+//wrap our App with the variable we created(connectedApp).
+export default connectedApp(App);
